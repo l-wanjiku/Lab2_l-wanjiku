@@ -74,7 +74,15 @@ def evaluate_grades(data):
     gpa = (total_grade / 100) * 5.0  # Assuming GPA scale is 5.0
 
 
-    # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
+    # d) Determine Pass/Fail status (>= 50% in BOTH categories)
+
+    passed_formative = formative_score >= 30
+    passed_summative = summative_score >= 20
+    overall_pass = passed_formative and passed_summative
+
+    formative_percentage = (formative_score / formative_weight) * 100
+    summative_percentage = (summative_score / summative_weight) * 100
+
     # TODO: e) Check for failed formative assignments (< 50%)
     #          and determine which one(s) have the highest weight for resubmission.
     # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
