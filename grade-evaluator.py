@@ -62,7 +62,18 @@ def evaluate_grades(data):
         print(f"Validation Error: Total Summative weight is {summative_weight}%, but it should be 40%.")
         sys.exit(1)
 
-    # TODO: c) Calculate the Final Grade and GPA
+    # c) Calculate the Final Grade and GPA
+
+    formative_items = [i for i in data if i['group'].lower() == 'formative']
+    summative_items = [i for i in data if i['group'].lower() == 'summative']
+
+    formative_score = sum(item['score'] * item['weight'] / 100 for item in formative_items)
+    summative_score = sum(item['score'] * item['weight'] / 100 for item in summative_items)
+
+    total_grade = formative_score + summative_score
+    gpa = (total_grade / 100) * 5.0  # Assuming GPA scale is 5.0
+
+
     # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
     # TODO: e) Check for failed formative assignments (< 50%)
     #          and determine which one(s) have the highest weight for resubmission.
