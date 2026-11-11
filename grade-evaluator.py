@@ -83,11 +83,25 @@ def evaluate_grades(data):
     formative_percentage = (formative_score / formative_weight) * 100
     summative_percentage = (summative_score / summative_weight) * 100
 
-    # TODO: e) Check for failed formative assignments (< 50%)
-    #          and determine which one(s) have the highest weight for resubmission.
+    # e) Check for failed formative assignments (< 50%)
+    #    and determine which one(s) have the highest weight for resubmission.
+
+    if not overall_pass:
+        failed_formatives = [i for i in formative_items if i['score'] < 50]
+        if failed_formatives:
+            max_weight = max(item['weight'] for item in failed_formatives)
+            resubmission_options = [item for item in failed_formatives if item['weight'] == max_weight]
+            print(f"\n--- Resubmission Recommendations ---")
+            print("Eligible failed Formative Assignments with Highest Weight:")
+            for item in resubmission_options:
+                print(f"- {item['assignment']} (Score: {item['score']}, Weight: {item['weight']})")
+        else:
+            print("\nNo failed Formative assignments eligible for resubmission.")
+
+
     # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
-    
-    pass
+       
+ pass
 
 if __name__ == "__main__":
     # 1. Load the data
