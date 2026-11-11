@@ -46,7 +46,22 @@ def evaluate_grades(data):
             print(f"Error: Score for assignment '{item['assignment']}' is out of range (0-100).")
             sys.exit(1)
 
-    # TODO: b) Validate total weights (Total=100, Summative=40, Formative=60)
+    # b) Validate total weights (Total=100, Summative=40, Formative=60)
+
+    total_weight = sum(item['weight'] for item in data)
+    formative_weight = sum(item['weight'] for item in data if item['group'].lower() == 'formative')
+    summative_weight = sum(item['weight'] for item in data if item['group'].lower() == 'summative')
+
+    if total_weight != 100:
+        print(f"Validation Error: Total weight is {total_weight}%, but it should be 100%.")
+        sys.exit(1)
+    if formative_weight != 60:
+        print(f"Validation Error: Total Formative weight is {formative_weight}%, but it should be 60%.")
+        sys.exit(1)
+    if summative_weight != 40:
+        print(f"Validation Error: Total Summative weight is {summative_weight}%, but it should be 40%.")
+        sys.exit(1)
+
     # TODO: c) Calculate the Final Grade and GPA
     # TODO: d) Determine Pass/Fail status (>= 50% in BOTH categories)
     # TODO: e) Check for failed formative assignments (< 50%)
