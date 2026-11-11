@@ -99,8 +99,13 @@ def evaluate_grades(data):
             print("\nNo failed Formative assignments eligible for resubmission.")
 
 
-    # TODO: f) Print the final decision (PASSED / FAILED) and resubmission options
-       
+    # f) Print the final decision (PASSED / FAILED) and resubmission options
+
+    print(f"\nFormative Score: {formative_pct:.2f}% (Passed: {passed_formative})")
+    print(f"Summative Score: {summative_pct:.2f}% (Passed: {passed_summative})")
+    print(f"Calculated Weight GPA: {gpa:.2f} / 5.0")
+    print(f"Final Status: {'PASSED' if overall_pass else 'FAILED'}")
+
  pass
 
 if __name__ == "__main__":
