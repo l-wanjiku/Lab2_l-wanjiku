@@ -33,4 +33,3 @@ To archive your current grades with a timestamp, clean your workspace, and log t
 
 Bash
 bash organizer.sh
-(Note: Ensure the shell script has execution permissions by running chmod +x organizer.sh first).
