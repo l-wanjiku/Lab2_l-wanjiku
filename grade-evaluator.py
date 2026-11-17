@@ -1,36 +1,3 @@
-import csv
-import sys
-import os
-
-def load_csv_data():
-    """
-    Prompts the user for a filename, checks if it exists, 
-    and extracts all fields into a list of dictionaries.
-    """
-    filename = input("Enter the name of the CSV file to process (e.g., grades.csv): ")
-    
-    if not os.path.exists(filename):
-        print(f"Error: The file '{filename}' was not found.")
-        sys.exit(1)
-        
-    assignments = []
-    
-    try:
-        with open(filename, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                # Convert numeric fields to floats for calculations
-                assignments.append({
-                    'assignment': row['assignment'],
-                    'group': row['group'],
-                    'score': float(row['score']),
-                    'weight': float(row['weight'])
-                })
-        return assignments
-    except Exception as e:
-        print(f"An error occurred while reading the file: {e}")
-        sys.exit(1)
-
 def evaluate_grades(data):
     """
     Implement your logic here.
@@ -39,7 +6,6 @@ def evaluate_grades(data):
     print("\n--- Processing Grades ---")
     
     # a) Check if all scores are percentage based (0-100)
-
     for item in data:
         score = item['score']
         if score < 0 or score > 100:
@@ -47,7 +13,6 @@ def evaluate_grades(data):
             sys.exit(1)
 
     # b) Validate total weights (Total=100, Summative=40, Formative=60)
-
     total_weight = sum(item['weight'] for item in data)
     formative_weight = sum(item['weight'] for item in data if item['group'].lower() == 'formative')
     summative_weight = sum(item['weight'] for item in data if item['group'].lower() == 'summative')
@@ -63,7 +28,6 @@ def evaluate_grades(data):
         sys.exit(1)
 
     # c) Calculate the Final Grade and GPA
-
     formative_items = [i for i in data if i['group'].lower() == 'formative']
     summative_items = [i for i in data if i['group'].lower() == 'summative']
 
@@ -73,39 +37,37 @@ def evaluate_grades(data):
     total_grade = formative_score + summative_score
     gpa = (total_grade / 100) * 5.0  # Assuming GPA scale is 5.0
 
-
-    # d) Determine Pass/Fail status (>= 50% in BOTH categories)
-
-    passed_formative = formative_score >= 30
-    passed_summative = summative_score >= 20
-    overall_pass = passed_formative and passed_summative
-
     formative_percentage = (formative_score / formative_weight) * 100
     summative_percentage = (summative_score / summative_weight) * 100
 
-    # e) Check for failed formative assignments (< 50%)
-    #    and determine which one(s) have the highest weight for resubmission.
+    # d) Determine Pass/Fail status (>= 50% in BOTH categories)
+    passed_formative = formative_percentage >= 50
+    passed_summative = summative_percentage >= 50
+    overall_pass = passed_formative and passed_summative
 
+    # e) Check for failed formative assignments (< 50%)
+    #      and determine which one(s) have the highest weight for resubmission.
+    resubmission_options = []
     if not overall_pass:
         failed_formatives = [i for i in formative_items if i['score'] < 50]
         if failed_formatives:
             max_weight = max(item['weight'] for item in failed_formatives)
             resubmission_options = [item for item in failed_formatives if item['weight'] == max_weight]
-            print(f"\n--- Resubmission Recommendations ---")
-            print("Eligible failed Formative Assignments with Highest Weight:")
-            for item in resubmission_options:
-                print(f"- {item['assignment']} (Score: {item['score']}, Weight: {item['weight']})")
-        else:
-            print("\nNo failed Formative assignments eligible for resubmission.")
-
 
     # f) Print the final decision (PASSED / FAILED) and resubmission options
+    print(f"Formative: {formative_score:.2f}/{formative_weight:.0f} ({formative_percentage:.1f}%)")
+    print(f"Summative: {summative_score:.2f}/{summative_weight:.0f} ({summative_percentage:.1f}%)")
+    print(f"Final Grade: {total_grade:.2f}/100")
+    print(f"GPA: {gpa:.2f} / 5.0")
+    print(f"\nFinal Status: {'PASSED' if overall_pass else 'FAILED'}")
 
-    print(f"\nFormative Score: {formative_percentage:.2f}% (Passed: {passed_formative})")
-    print(f"Summative Score: {summative_percentage:.2f}% (Passed: {passed_summative})")
-    print(f"Calculated Weight GPA: {gpa:.2f} / 5.0")
-    print(f"Final Status: {'PASSED' if overall_pass else 'FAILED'}")
-
+    if not overall_pass:
+        if resubmission_options:
+            print("\nEligible for resubmission (failed formative with the highest weight):")
+            for item in resubmission_options:
+                print(f" - {item['assignment']} (score: {item['score']}, weight: {item['weight']})")
+        else:
+            print("\nNo failed Formative assignments eligible for resubmission.")
 
 if __name__ == "__main__":
     # 1. Load the data
